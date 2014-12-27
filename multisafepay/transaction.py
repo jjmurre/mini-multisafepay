@@ -105,6 +105,9 @@ class Transaction(object):
         xml_str = transaction_template % self.kwargs
         return get_result(self.api_url, xml_str, 'transaction/payment_url')
 
+    def __str__(self):
+        return self.kwargs
+
 
 def get_status(**kwargs):
     if 'api_url' not in kwargs:
