@@ -7,6 +7,32 @@ from xml.etree import ElementTree as ET
 API_URL = "https://testapi.multisafepay.com/ewx/"
 # API_URL = "https://localhost:8000/ewx/"
 
+direct_transaction_template = '''<?xml version="1.0" encoding="UTF-8"?>
+<directtransaction ua="MSP">
+    <merchant>
+        <account>%(account)s</account>
+        <site_id>%(site_id)s</site_id>
+        <site_secure_code>%(site_secure_code)s</site_secure_code>
+        <notification_url>%(notification_url)s</notification_url>
+        <redirect_url>%(redirect_url)s</redirect_url>
+    </merchant>
+    <customer>
+        <ipaddress>127.0.0.1</ipaddress>
+    </customer>
+    <transaction>
+        <id>123</id>
+        <currency>EUR</currency>
+        <amount>%(amount)s</amount>
+        <description>%(description)s</description>
+        <gateway>DIRDEB</gateway>
+    </transaction>
+    <gatewayinfo>
+        <recurringid>%(recurringid)s</recurringid>
+    </gatewayinfo>
+<signature>%(signature)s</signature>
+</directtransaction>
+'''
+
 transaction_template = '''<?xml version="1.0" encoding="UTF-8" ?>
 <redirecttransaction ua="Example 1.0">
     <merchant>
