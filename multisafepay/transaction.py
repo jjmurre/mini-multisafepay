@@ -3,10 +3,13 @@ import hashlib
 from xml.sax.saxutils import escape
 # from xml.parsers.expat import ExpatError
 from xml.etree import ElementTree as ET
+import requests
+import logging
 
 API_URL = "https://testapi.multisafepay.com/ewx/"
 # API_URL = "https://localhost:8000/ewx/"
 
+# <redirect_url>%(redirect_url)s</redirect_url>
 direct_transaction_template = '''<?xml version="1.0" encoding="UTF-8"?>
 <directtransaction ua="MSP">
     <merchant>
@@ -14,17 +17,16 @@ direct_transaction_template = '''<?xml version="1.0" encoding="UTF-8"?>
         <site_id>%(site_id)s</site_id>
         <site_secure_code>%(site_secure_code)s</site_secure_code>
         <notification_url>%(notification_url)s</notification_url>
-        <redirect_url>%(redirect_url)s</redirect_url>
     </merchant>
     <customer>
-        <ipaddress>127.0.0.1</ipaddress>
+        <ipaddress>%(ipaddress)s</ipaddress>
     </customer>
     <transaction>
-        <id>123</id>
-        <currency>EUR</currency>
+        <id>%(transaction_id)s</id>
+        <currency>%(currency)s</currency>
         <amount>%(amount)s</amount>
         <description>%(description)s</description>
-        <gateway>DIRDEB</gateway>
+        <gateway>%(gateway)s</gateway>
     </transaction>
     <gatewayinfo>
         <recurringid>%(recurringid)s</recurringid>
@@ -108,6 +110,36 @@ def get_result(url, xml_str, result_path):
         code = tree.find('error/code').text
         description = tree.find('error/description').text
         raise MSPError(code, description)
+
+
+class DirectTransaction(object):
+
+    def __init__(self, **kwargs):
+        self.kwargs = kwargs
+        if 'api_url' not in self.kwargs:
+            self.kwargs['api_url'] = API_URL
+        kwargs['currency'] = 'EUR'
+        self.api_url = self.kwargs['api_url']
+        m = hashlib.md5()
+        for k in ('amount', 'currency', 'account',
+                'site_id', 'transaction_id'):
+            m.update(kwargs[k])
+        for k, v in self.kwargs.items():
+            self.kwargs[k] = escape(v)
+        self.kwargs['signature'] = m.hexdigest()
+
+    def start(self):
+        """ Post to msp """
+        xml_str = direct_transaction_template % self.kwargs
+        logging.info(xml_str)
+        response = requests.post(self.api_url, data=xml_str)
+        tree = ET.fromstring(response.text.encode('utf-8'))
+        logging.info(ET.tostring(tree))
+        result = tree.get('result')
+        if result != 'ok':
+            code = tree.find('error/code').text
+            description = tree.find('error/description').text
+            raise MSPError(code, description)
 
 
 class Transaction(object):
