@@ -132,7 +132,7 @@ class DirectTransaction(object):
         """ Post to msp """
         xml_str = direct_transaction_template % self.kwargs
         logging.info(xml_str)
-        response = requests.post(self.api_url, data=xml_str)
+        response = requests.post(self.api_url, data=xml_str, allow_redirects=False)
         tree = ET.fromstring(response.text.encode('utf-8'))
         logging.info(ET.tostring(tree))
         result = tree.get('result')
