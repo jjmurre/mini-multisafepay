@@ -141,6 +141,9 @@ class DirectTransaction(object):
             description = tree.find('error/description').text
             raise MSPError(code, description)
 
+    def __repr__(self):
+        return str(self.kwargs)
+
 
 class Transaction(object):
 
