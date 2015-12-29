@@ -151,7 +151,8 @@ class Transaction(object):
         self.kwargs = kwargs
         if 'api_url' not in self.kwargs:
             self.kwargs['api_url'] = API_URL
-        kwargs['currency'] = 'EUR'
+        if 'currency' not in self.kwargs:
+            kwargs['currency'] = 'EUR'
         self.api_url = self.kwargs['api_url']
         m = hashlib.md5()
         for k in ('amount', 'currency', 'account',
