@@ -64,7 +64,7 @@ transaction_template = '''<?xml version="1.0" encoding="UTF-8" ?>
     </customer>
     <transaction>
         <id>%(transaction_id)s</id>
-        <currency>%(currency)</currency>
+        <currency>%(currency)s</currency>
         <amount>%(amount)s</amount>
         <description>%(description)s</description>
         <var1></var1>
