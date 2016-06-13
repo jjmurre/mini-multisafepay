@@ -64,7 +64,7 @@ transaction_template = '''<?xml version="1.0" encoding="UTF-8" ?>
     </customer>
     <transaction>
         <id>%(transaction_id)s</id>
-        <currency>EUR</currency>
+        <currency>%(currency)s</currency>
         <amount>%(amount)s</amount>
         <description>%(description)s</description>
         <var1></var1>
@@ -154,7 +154,8 @@ class Transaction(object):
         self.kwargs = kwargs
         if 'api_url' not in self.kwargs:
             self.kwargs['api_url'] = API_URL
-        kwargs['currency'] = 'EUR'
+        if 'currency' not in self.kwargs:
+            kwargs['currency'] = 'EUR'
         self.api_url = self.kwargs['api_url']
         m = hashlib.md5()
         for k in ('amount', 'currency', 'account',
