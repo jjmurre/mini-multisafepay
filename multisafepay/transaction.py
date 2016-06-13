@@ -125,7 +125,10 @@ class DirectTransaction(object):
                 'site_id', 'transaction_id'):
             m.update(kwargs[k])
         for k, v in self.kwargs.items():
-            self.kwargs[k] = escape(v)
+            if v:
+                self.kwargs[k] = escape(v)
+            else:
+                logging.info("No value for %s", k)
         self.kwargs['signature'] = m.hexdigest()
 
     def start(self):
