@@ -1,16 +1,19 @@
 from setuptools import setup, find_packages
 
-version = "1.0.0"
+version = "1.0.1"
+
+
+def readme():
+    with open("README.md") as f:
+        return f.read()
+
 
 setup(
     name="mini-multisafepay",
     version=version,
     description="Multisafepay integration",
-    long_description="""This package enables you to talk to a multisafepay
-      payment provider. It uses the old deprecated XML API.
-      There is not much documentation at the moment. In the
-      package are tests that give you a good starting point.
-""",
+    long_description=readme(),
+    long_description_content_type="text/markdown",
     classifiers=[
         "Operating System :: OS Independent",
         "Programming Language :: Python",
