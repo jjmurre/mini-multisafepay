@@ -20,7 +20,7 @@ setup(
     keywords="",
     author="Jan Murre",
     author_email="jan.murre@catalyz.nl",
-    url="http://www.catalyz.nl",
+    url="https://github.com/jjmurre/mini-multisafepay",
     license="Apache",
     packages=find_packages(exclude=["ez_setup", "examples", "tests"]),
     include_package_data=True,
