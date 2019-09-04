@@ -1,4 +1,3 @@
-import urllib
 import hashlib
 from xml.sax.saxutils import escape
 # from xml.parsers.expat import ExpatError
@@ -100,9 +99,9 @@ class MSPError(Exception):
 
 
 def get_result(url, xml_str, result_path):
-    f = urllib.urlopen(url, xml_str)
-    # XXX extra checks for status
-    tree = ET.fromstring(f.read())
+    response = requests.post(url, data=xml_str)
+    response.raise_for_status()
+    tree = ET.fromstring(response.text)
     result = tree.get('result')
     if result == 'ok':
         return tree.find(result_path).text
@@ -123,7 +122,7 @@ class DirectTransaction(object):
         m = hashlib.md5()
         for k in ('amount', 'currency', 'account',
                 'site_id', 'transaction_id'):
-            m.update(kwargs[k])
+            m.update(kwargs[k].encode('utf-8'))
         for k, v in self.kwargs.items():
             if v:
                 self.kwargs[k] = escape(v)
@@ -160,7 +159,7 @@ class Transaction(object):
         m = hashlib.md5()
         for k in ('amount', 'currency', 'account',
                 'site_id', 'transaction_id'):
-            m.update(kwargs[k])
+            m.update(kwargs[k].encode('utf-8'))
         for k, v in self.kwargs.items():
             self.kwargs[k] = escape(v)
         self.kwargs['signature'] = m.hexdigest()
